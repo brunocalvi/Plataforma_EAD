@@ -1,6 +1,8 @@
 <?php 
 include('lib/conexao.php');
 include('lib/enviaArquivo.php');
+include('lib/protect.php');
+protect(1);
 
 if(isset($_POST['enviar'])) {
 

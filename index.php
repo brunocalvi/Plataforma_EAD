@@ -1,9 +1,22 @@
-<?php 
+<?php
+include('lib/conexao.php');
+include('lib/protect.php');
+protect(0);
+
+if (!isset($_SESSION))
+    session_start();
+
+$id_usuario = $_SESSION['usuario'];
 $pagina = 'inicial.php';
 
 if(isset($_GET['p'])) {
     $pagina = $_GET['p'] . '.php';
 }
+
+$sql_code = "SELECT * FROM usuarios WHERE id = '$id_usuario'";
+$query_usuarios = $mysqli->query($sql_code) or die($mysqli->error);
+
+$usuario = $query_usuarios->fetch_assoc();
 
 ?>
 
@@ -93,28 +106,31 @@ if(isset($_GET['p'])) {
                             </li>
                         </ul>
                         <ul class="nav-right">
+
+                            <?php if(!isset($_SESSION['admin']) || !$_SESSION['admin']) { ?>
                             <li class="header-notification">
                                 <a href="#!">
                                     <i class="ti-money"></i>
-                                    <span class="badge bg-c-pink"></span> 50,00
+                                    <span class="badge bg-c-pink"></span> <?php echo number_format($usuario['creditos'], 2, ',', '.')?>
                                 </a>
                             </li>
+                            <?php } ?>
 
                             <li class="user-profile header-notification">
                                 <a href="#!">
-                                    <img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">
-                                    <span>John Doe</span>
+                                    <!--<img src="assets/images/avatar-4.jpg" class="img-radius" alt="User-Profile-Image">-->
+                                    <span><?php echo $usuario['nome']; ?></span>
                                     <i class="ti-angle-down"></i>
                                 </a>
                                 <ul class="show-notification profile-notification">
 
                                     <li>
-                                        <a href="#">
+                                        <a href="index.php?p=perfil">
                                             <i class="ti-user"></i> Perfil
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="auth-normal-sign-in.html">
+                                        <a href="logout.php">
                                             <i class="ti-layout-sidebar-left"></i> Sair
                                         </a>
                                     </li>
@@ -131,6 +147,9 @@ if(isset($_GET['p'])) {
                     <nav class="pcoded-navbar">
                         <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
                         <div class="pcoded-inner-navbar main-menu">
+
+                        <?php if(!isset($_SESSION['admin']) || !$_SESSION['admin']) { ?>
+
                             <div class="pcoded-navigatio-lavel" data-i18n="nav.category.navigation">Menu</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
@@ -163,7 +182,9 @@ if(isset($_GET['p'])) {
                                 </li>       
                             </ul>
                             
-                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.navigation">Administrador</div>
+                            <?php } else { ?>
+
+                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.navigation">Menu do Administrador</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
                                     <a href="index.php">
@@ -203,7 +224,9 @@ if(isset($_GET['p'])) {
                                     </a>
                                 </li>       
                             </ul>
-                            
+
+                            <?php } ?>
+
                         </div>
                     </nav>
                     

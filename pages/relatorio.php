@@ -3,13 +3,18 @@ include('lib/conexao.php');
 include('lib/protect.php');
 protect(1);
 
-$sql_cursos = "SELECT * FROM cursos";
-$query_cursos = $mysqli->query($sql_cursos) or die($mysqli->error);
+$sql_relatorio = "SELECT rel.id, user.nome, rel.data_compra, rel.valor 
+                    FROM relatorio rel, cursos cur, usuarios user
+                    WHERE user.id = rel.id_usuario 
+                    AND cur.id = id_curso 
+                ";
 
-$num_cursos = $query_cursos->num_rows;
-    
-    
+$query_relatorio = $mysqli->query($sql_relatorio) or die($mysqli->error);
+
+$num_relatorio = $query_relatorio->num_rows;
+  
 ?>
+
 <!-- Page-header start -->
 <div class="page-header card">
     <div class="row align-items-end">
@@ -17,8 +22,8 @@ $num_cursos = $query_cursos->num_rows;
           <div class="page-header-title">
 
                 <div class="d-inline">
-                    <h4>Gerenciamento dos Cursos</h4>
-                    <span>Administração dos cursos cadastrados no sistema!</span>
+                    <h4>Relatorio</h4>
+                    <span>Visualizando as informaçoes do usuario no sistema!</span>
                 </div>
            </div>
         </div>
@@ -31,7 +36,7 @@ $num_cursos = $query_cursos->num_rows;
                             <i class="icofont icofont-home"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item">Gerenciar Cursos</li>
+                    <li class="breadcrumb-item">Relatorio</li>
                 </ul>
             </div>
             </div>
@@ -44,50 +49,42 @@ $num_cursos = $query_cursos->num_rows;
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Cursos</h5>
-                    <span>Todos os cursos disponibilizados pela Harvard Business School</span>
-                    <a href="index.php?p=cadastrar_curso">
-                    <button class="btn btn-out-dashed btn-success btn-squard" style="float: right;">Cadastrar Novo Curso</button>
-                    </a>
-                    
+                    <h5>Relatorio</h5>
+                    <span>Examine o relatorio de compras do usuario</span>
                 </div>
                 <div class="card-block table-border-style">
                    <div class="table-responsive">
                        <table class="table">
                             <thead>
                                <tr>
-                                   <th>#</th>
-                                   <th>Imagem</th>
-                                   <th>Titulo</th>
-                                   <th>Preço</th>
-                                   <th>Gerenciar</th>
+                                   <th>ID</th>
+                                   <th>Usuario</th>
+                                   <th>Curso</th>
+                                   <th>Data da compra</th>
+                                   <th>Valor</th>
                                </tr>
                            </thead>
                            <tbody>
                                
                         <?php
-                            if($num_cursos == 0) { ?>
+                            if($num_relatorio == 0) { ?>
         
                                 <tr>
-                                    <td colspan="5">Não há Registro de Cursos !</td>
+                                    <td colspan="5">Não há nenhum registro do Usuario !</td>
                                 </tr>
                                
                         <?php
                             } else {
                                
-                                while($curso = $query_cursos->fetch_assoc()) {
-
+                                while($relatorio = $query_relatorio->fetch_assoc()) {
                         ?>
                                
                             <tr>
-                                <td scope="row"><?php echo $curso['id']; ?></td>
-                                <td><img src="<?php echo $curso['imagem']; ?>" height="50px" alt="logo curso"></td>
-                                <td><?php echo $curso['titulo']; ?></td>
-                                <td>R$ <?php echo number_format($curso['preco'], 2, ',', '.') ?></td>
-                                <td>
-                                    <a href="index.php?p=editar_curso&id=<?php echo $curso['id'];?>">Editar</a> | 
-                                    <a href="index.php?p=deletar_curso&id=<?php echo $curso['id'];?>">Deletar</a>
-                                </td>
+                                <td scope="row"><?php echo $relatorio['id']; ?></td>
+                                <td><?php echo $relatorio['nome']; ?></td>
+                                <td><?php echo $relatorio['titulo']; ?></td>
+                                <td><?php echo $relatorio['data_compra'] = gmDate("d/m/Y H:i"); ?></td>
+                                <td>R$ <?php echo number_format($relatorio['valor'], 2, ',', '.') ?></td>    
                             </tr>
                                
                         <?php

@@ -1,3 +1,15 @@
+<?php 
+if (!isset($_SESSION)) 
+    session_start();
+
+$id = $_SESSION['usuario'];
+
+$cursos_query = $mysqli->query("SELECT * FROM cursos WHERE id NOT IN 
+                                (SELECT id_curso FROM relatorio WHERE id_usuario = '$id_usuario')
+                                ") or die($mysqli->error);
+
+?>
+
 <!-- Page-header start -->
 <div class="page-header card">
     <div class="row align-items-end">
@@ -29,21 +41,31 @@
 
 <div class="page-body">
     <div class="row">
+
+        <?php while ($curso = $cursos_query->fetch_assoc()) { ?>
+
         <div class="col-sm-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Pagina Inicial</h5>
+                    <h5><?php echo $curso['titulo']; ?></h5>
                     
                 </div>
                 <div class="card-block">
-                    <img src="./assets/banner_cursos/cursos.jpg" class="img-fluid" alt="img curso">
+                    <img src="<?php echo $curso['imagem']; ?>" class="img-fluid" alt="img curso">
                 <hr/>
                     <p>
-                        "Na Harvard Business School nos ensinamos cursos proficionais e acessiveis."
+                    <?php echo $curso['descricao_curta']; ?>
                     </p>
-                    <button class="btn form-control btn-out-dashed btn-success btn-squard">Adquirir Por R$ 45</button>
+                    <form action="index.php?p=meus_cursos" method="POST">
+                        <button type="submit" name="adquirir" value="<?php echo $curso['id']; ?>" class="btn form-control btn-out-dashed btn-success btn-squard">
+                            Adquirir Por R$ <?php echo number_format($curso['preco'], 2, ',' ,'.'); ?>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
+
+        <?php } ?>
+
     </div>
 </div>

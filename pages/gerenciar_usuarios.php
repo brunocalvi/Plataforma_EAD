@@ -3,13 +3,13 @@ include('lib/conexao.php');
 include('lib/protect.php');
 protect(1);
 
-$sql_cursos = "SELECT * FROM cursos";
-$query_cursos = $mysqli->query($sql_cursos) or die($mysqli->error);
+$sql_usuarios = "SELECT * FROM usuarios";
+$query_usuarios = $mysqli->query($sql_usuarios) or die($mysqli->error);
 
-$num_cursos = $query_cursos->num_rows;
-    
-    
+$num_usuarios = $query_usuarios->num_rows;
+  
 ?>
+
 <!-- Page-header start -->
 <div class="page-header card">
     <div class="row align-items-end">
@@ -17,8 +17,8 @@ $num_cursos = $query_cursos->num_rows;
           <div class="page-header-title">
 
                 <div class="d-inline">
-                    <h4>Gerenciamento dos Cursos</h4>
-                    <span>Administração dos cursos cadastrados no sistema!</span>
+                    <h4>Gerenciamento dos Usuarios</h4>
+                    <span>Administração dos usuarios cadastrados no sistema!</span>
                 </div>
            </div>
         </div>
@@ -31,7 +31,7 @@ $num_cursos = $query_cursos->num_rows;
                             <i class="icofont icofont-home"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item">Gerenciar Cursos</li>
+                    <li class="breadcrumb-item">Gerenciar Usuarios</li>
                 </ul>
             </div>
             </div>
@@ -44,10 +44,10 @@ $num_cursos = $query_cursos->num_rows;
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Cursos</h5>
-                    <span>Todos os cursos disponibilizados pela Harvard Business School</span>
-                    <a href="index.php?p=cadastrar_curso">
-                    <button class="btn btn-out-dashed btn-success btn-squard" style="float: right;">Cadastrar Novo Curso</button>
+                    <h5>Usuarios</h5>
+                    <span>Lista de todos os usuarios que utilizam a plataforma da Harvard Business School</span>
+                    <a href="index.php?p=cadastrar_usuario">
+                    <button class="btn btn-out-dashed btn-success btn-squard" style="float: right;">Cadastrar Novo Usuario</button>
                     </a>
                     
                 </div>
@@ -56,37 +56,38 @@ $num_cursos = $query_cursos->num_rows;
                        <table class="table">
                             <thead>
                                <tr>
-                                   <th>#</th>
-                                   <th>Imagem</th>
-                                   <th>Titulo</th>
-                                   <th>Preço</th>
+                                   <th>ID</th>
+                                   <th>Nome</th>
+                                   <th>E-mail</th>
+                                   <th>Creditos</th>
+                                   <th>Data de Cadastro</th>
                                    <th>Gerenciar</th>
                                </tr>
                            </thead>
                            <tbody>
                                
                         <?php
-                            if($num_cursos == 0) { ?>
+                            if($num_usuarios == 0) { ?>
         
                                 <tr>
-                                    <td colspan="5">Não há Registro de Cursos !</td>
+                                    <td colspan="5">Não há Registro de Usuarios !</td>
                                 </tr>
                                
                         <?php
                             } else {
                                
-                                while($curso = $query_cursos->fetch_assoc()) {
-
+                                while($usuario = $query_usuarios->fetch_assoc()) {
                         ?>
                                
                             <tr>
-                                <td scope="row"><?php echo $curso['id']; ?></td>
-                                <td><img src="<?php echo $curso['imagem']; ?>" height="50px" alt="logo curso"></td>
-                                <td><?php echo $curso['titulo']; ?></td>
-                                <td>R$ <?php echo number_format($curso['preco'], 2, ',', '.') ?></td>
+                                <td scope="row"><?php echo $usuario['id']; ?></td>
+                                <td><?php echo $usuario['nome']; ?></td>
+                                <td><?php echo $usuario['email']; ?></td>
+                                <td>R$ <?php echo number_format($usuario['creditos'], 2, ',', '.') ?></td>
+                                <td><?php echo $usuario['data_cadastro'] = gmDate("d/m/Y"); ?></td>
                                 <td>
-                                    <a href="index.php?p=editar_curso&id=<?php echo $curso['id'];?>">Editar</a> | 
-                                    <a href="index.php?p=deletar_curso&id=<?php echo $curso['id'];?>">Deletar</a>
+                                    <a href="index.php?p=editar_usuario&id=<?php echo $usuario['id'];?>">Editar</a> | 
+                                    <a href="index.php?p=deletar_usuario&id=<?php echo $usuario['id'];?>">Deletar</a>
                                 </td>
                             </tr>
                                
