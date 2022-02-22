@@ -2,9 +2,9 @@
 include('lib/conexao.php');
 /*include('lib/enviaArquivo.php');*/
 include('lib/protect.php');
-protect(1);
+protect(0);
 
-$id = intval($_GET['id']);
+$id = intval($_SESSION['usuario']);
 
 if(isset($_POST['enviar'])) {
 
@@ -41,9 +41,7 @@ if (count($erro) == 0) {
 
     $sql_code = "UPDATE usuarios SET
                     nome = '$nome',
-                    email = '$email',
-                    creditos = '$creditos',
-                    admin = '$admin'
+                    email = '$email'
                 WHERE id = '$id'";
 
     if (!empty($senha_desc)) {
@@ -53,14 +51,12 @@ if (count($erro) == 0) {
         $sql_code = "UPDATE usuarios SET
                 nome = '$nome',
                 email = '$email',
-                senha = '$senha',
-                creditos = '$creditos',
-                admin = '$admin'
+                senha = '$senha'
             WHERE id = '$id'";
     }
 
     $mysqli->query($sql_code) or die($mysqli->error);
-    die("<script>location.href='index.php?p=gerenciar_usuarios'</script>");
+    die("<script>location.href='index.php'</script>");
     
   }
 }
@@ -81,8 +77,8 @@ $data_cadastro = $mysqli->escape_string($usuario['data_cadastro']);
           <div class="page-header-title">
 
                 <div class="d-inline">
-                    <h4>Editar Usuario</h4>
-                    <span>Insira as informaçoes que deseja editar e salve!</span>
+                    <h4>Perfil do Usuario</h4>
+                    <span>Pagina com as Informações do usuario:</span>
                 </div>
            </div>
         </div>
@@ -95,12 +91,7 @@ $data_cadastro = $mysqli->escape_string($usuario['data_cadastro']);
                             <i class="icofont icofont-home"></i>
                         </a>
                     </li>
-                    <li class="breadcrumb-item">
-                        <a href="index.php?p=gerenciar_usuarios">
-                            Gerenciar usuarios
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">Editar Usuario</li>
+                    <li class="breadcrumb-item">Perfil Usuario</li>
                 </ul>
             </div>
             </div>
@@ -158,7 +149,7 @@ $data_cadastro = $mysqli->escape_string($usuario['data_cadastro']);
                         <div class="col-lg-4">
                             <div class="form-group">
                                 <label for="">Creditos:</label><br>
-                                <input type="text" class="form-control" name="creditos" value="<?php echo $usuario['creditos']; ?>">
+                                <input type="text" class="form-control" name="creditos" value="<?php echo $usuario['creditos']; ?>" disabled="">
                             </div>
                         </div>
 
@@ -179,15 +170,15 @@ $data_cadastro = $mysqli->escape_string($usuario['data_cadastro']);
                         <div class="col-lg-6">
                             <div class="form-group">
                                 <label for="">Usuario Administrador:</label><br>
-                                <input type="radio" name="admin" value="1" <?php if($usuario['admin'] == 1) echo 'checked'; ?>/> Sim
-                                <input type="radio" name="admin" value="0" <?php if($usuario['admin'] == 0) echo 'checked'; ?> style="margin-left: 15px;"/> Não
+                                <input disabled="" type="radio" name="admin" value="1" <?php if($usuario['admin'] == 1) echo 'checked'; ?>/> Sim
+                                <input disabled="" type="radio" name="admin" value="0" <?php if($usuario['admin'] == 0) echo 'checked'; ?> style="margin-left: 15px;"/> Não
                             </div>
                         </div>
 
                         <div class="col-lg-12">
                             <button type="submit" name="enviar" value="1" class="btn btn-success btn-round" style="float: right;"><i class="ti-save"></i>Salvar</button>
                             
-                            <a href="index.php?p=gerenciar_usuarios"><button type="button" class="btn btn-danger btn-round" style="float: right;margin-right: 10px;"><i class="ti-arrow-left"></i>Voltar</button></a>
+                            <a href="index.php"><button type="button" class="btn btn-danger btn-round" style="float: right;margin-right: 10px;"><i class="ti-arrow-left"></i>Voltar</button></a>
                         </div>
                     </div>
                     </form>

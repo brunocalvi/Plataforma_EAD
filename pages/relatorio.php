@@ -3,16 +3,17 @@ include('lib/conexao.php');
 include('lib/protect.php');
 protect(1);
 
-$sql_relatorio = "SELECT rel.id, user.nome, rel.data_compra, rel.valor 
-                    FROM relatorio rel, cursos cur, usuarios user
-                    WHERE user.id = rel.id_usuario 
-                    AND cur.id = id_curso 
-                ";
+$sql_relatorios = "SELECT r.id, u.nome, c.titulo, r.data_compra, r.valor
+                    FROM relatorio r 
+                    INNER JOIN usuarios u 
+                    INNER JOIN cursos c 
+                    WHERE u.id = r.id_usuario 
+                    AND c.id = r.id_curso";
 
-$query_relatorio = $mysqli->query($sql_relatorio) or die($mysqli->error);
+$sql_query = $mysqli->query($sql_relatorios) or die($mysqli->error);
 
-$num_relatorio = $query_relatorio->num_rows;
-  
+$num_relatorios = $sql_query->fetch_assoc();
+
 ?>
 
 <!-- Page-header start -->
@@ -22,8 +23,8 @@ $num_relatorio = $query_relatorio->num_rows;
           <div class="page-header-title">
 
                 <div class="d-inline">
-                    <h4>Relatorio</h4>
-                    <span>Visualizando as informaçoes do usuario no sistema!</span>
+                    <h4>Relatorio de Compras</h4>
+                    <span>Visualizando as compras efetuadas no sistema!</span>
                 </div>
            </div>
         </div>
@@ -50,7 +51,7 @@ $num_relatorio = $query_relatorio->num_rows;
             <div class="card">
                 <div class="card-header">
                     <h5>Relatorio</h5>
-                    <span>Examine o relatorio de compras do usuario</span>
+                    <span>Examine o relatorio de compras do Sistema !</span>
                 </div>
                 <div class="card-block table-border-style">
                    <div class="table-responsive">
@@ -65,31 +66,33 @@ $num_relatorio = $query_relatorio->num_rows;
                                </tr>
                            </thead>
                            <tbody>
-                               
-                        <?php
-                            if($num_relatorio == 0) { ?>
-        
-                                <tr>
-                                    <td colspan="5">Não há nenhum registro do Usuario !</td>
-                                </tr>
-                               
-                        <?php
-                            } else {
-                               
-                                while($relatorio = $query_relatorio->fetch_assoc()) {
+                                   
+                        <?php  if ($num_relatorios == 0) { ?>
+
+                            <tr>
+                                <td colspan="5">Não há Registro no sistema !</td>
+                            </tr>
+
+                        <?php } else {
+
+                            echo 'teste 01';
+
+                            while($relatorio = $sql_query->fetch_assoc()) {
+
+                                $data_compra = $relatorio['data_compra']; 
                         ?>
                                
                             <tr>
                                 <td scope="row"><?php echo $relatorio['id']; ?></td>
                                 <td><?php echo $relatorio['nome']; ?></td>
                                 <td><?php echo $relatorio['titulo']; ?></td>
-                                <td><?php echo $relatorio['data_compra'] = gmDate("d/m/Y H:i"); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($data_compra)); ?></td>
                                 <td>R$ <?php echo number_format($relatorio['valor'], 2, ',', '.') ?></td>    
                             </tr>
                                
-                        <?php
-                                }
+                        <?php 
                             }
+                        } 
                         ?>    
                                
                            </tbody> 

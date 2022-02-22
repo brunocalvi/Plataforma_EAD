@@ -77,6 +77,8 @@ $num_usuarios = $query_usuarios->num_rows;
                             } else {
                                
                                 while($usuario = $query_usuarios->fetch_assoc()) {
+
+                                    $data_cadastro = $usuario['data_cadastro'];
                         ?>
                                
                             <tr>
@@ -84,7 +86,7 @@ $num_usuarios = $query_usuarios->num_rows;
                                 <td><?php echo $usuario['nome']; ?></td>
                                 <td><?php echo $usuario['email']; ?></td>
                                 <td>R$ <?php echo number_format($usuario['creditos'], 2, ',', '.') ?></td>
-                                <td><?php echo $usuario['data_cadastro'] = gmDate("d/m/Y"); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($data_cadastro)); ?></td>
                                 <td>
                                     <a href="index.php?p=editar_usuario&id=<?php echo $usuario['id'];?>">Editar</a> | 
                                     <a href="index.php?p=deletar_usuario&id=<?php echo $usuario['id'];?>">Deletar</a>

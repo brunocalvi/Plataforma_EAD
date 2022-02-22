@@ -1,3 +1,80 @@
+<?php 
+$mensagem_alert = false;
+
+if(isset($_POST['email'])) {
+
+include('lib/conexao.php');
+include('lib/generateRandomString.php');
+
+$email = $_POST['email'];
+
+$sql_query = $mysqli->query("SELECT * FROM usuarios WHERE email = '$email'") or die($mysqli->error);
+
+$usuario = $sql_query->fetch_assoc();
+
+    if($usuario['id']) {
+        $nova_senha = generateRandomString($length = 6);
+        
+        $id_usuario = $usuario['id'];
+
+        $nova_senha_cript = password_hash($nova_senha, PASSWORD_DEFAULT);
+
+        $mysqli->query("UPDATE usuarios SET senha = '$nova_senha_cript' WHERE id = '$id_usuario'");
+        
+        $nome		= $usuario["nome"];	// Pega o valor do campo Nome
+        $email		= $usuario["email"];	// Pega o valor do campo Email
+
+        // Variável que junta os valores acima e monta o corpo do email
+
+        $mensagem 	= 'Olá ' . $nome . '! <br><br> Segue a nova senha para acessar a plataforma EAD: ' . $nova_senha;
+
+        require_once("phpmailer/class.phpmailer.php");
+
+        define('GUSER', 'calvireis@gmail.com');	// <-- Insira aqui o seu GMail
+        define('GPWD', 'Vp.cew*12345@');		// <-- Insira aqui a senha do seu GMail
+        $de_nome = "Plataforma EAD";
+        $assunto = "Alteração de Senha";
+
+        function smtpmailer($email, $dono, $de_nome, $assunto, $mensagem) { 
+	        global $error;
+	        $mail = new PHPMailer();
+	        $mail->IsSMTP();		// Ativar SMTP
+	        $mail->SMTPDebug = 0;		// Debugar: 1 = erros e mensagens, 2 = mensagens apenas
+	        $mail->SMTPAuth = true;		// Autenticação ativada
+	        $mail->SMTPSecure = 'ssl';	// SSL REQUERIDO pelo GMail
+	        $mail->Host = 'smtp.gmail.com';	// SMTP utilizado
+	        $mail->Port = 587;  		// A porta 587 deverá estar aberta em seu servidor
+	        $mail->Username = GUSER;
+	        $mail->Password = GPWD;
+	        $mail->SetFrom($dono, $de_nome);
+	        $mail->Subject = $assunto;
+	        $mail->Body = $mensagem;
+	        $mail->AddAddress($email);
+
+	        if(!$mail->Send()) {
+		        echo $error = 'Mail error: '.$mail->ErrorInfo; 
+		        return false;
+	        } else {
+		        echo $error = 'Mensagem enviada!';
+		        return true;
+	        }
+        }
+
+// Insira abaixo o email que irá receber a mensagem, o email que irá enviar (o mesmo da variável GUSER), o nome do email que envia a mensagem, o Assunto da mensagem e por último a variável com o corpo do email.
+
+        if (smtpmailer($email, $dono, $de_nome, $assunto, $mensagem)) {
+	        $mensagem_alert = "Se o seu e-mail foi encontrado em nosso banco de dados, uma nova senha foi enviada para ele !!"; 
+        }
+
+        if (!empty($error)) {
+            $mensagem_alert = "Se o seu e-mail foi encontrado em nosso banco de dados, uma nova senha foi enviada para ele !!";
+        }        
+        
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -57,7 +134,7 @@
                 <div class="col-sm-12">
                     <!-- Authentication card start -->
                     <div class="login-card card-block auth-body mr-auto ml-auto">
-                        <form class="md-float-material">
+                        <form method="POST" class="md-float-material">
                             <div class="text-center">
                                 <img src="assets/images/logo_acesso.png" alt="logo.png" height="100px">
                             </div>
@@ -68,6 +145,13 @@
                                     </div>
                                 </div>
                                 <hr/>
+
+                                <?php if($mensagem_alert !== false) { ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <?php echo "$mensagem_alert";?>
+                                </div>
+                                <?php } ?>
+
                                 <p style="color: #666666;">Digite seu e-mail para ser enviado a nova senha!</p>
                                 <div class="input-group">
                                     <input type="email" name="email" class="form-control" placeholder="E-mail">
@@ -80,7 +164,7 @@
                                 </div>
                                 <div class="row m-t-30">
                                     <div class="col-md-12">
-                                        <button type="button" class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20">Enviar Senha</button>
+                                        <button type="submit" class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20">Enviar Senha</button>
                                     </div>
                                 </div>
                                 
